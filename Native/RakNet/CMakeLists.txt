@@ -1,0 +1,4 @@
+cmake_minimum_required(VERSION 2.6)
+
+file(GLOB RAKNET_SOURCES "*.*")
+set(RAKNET_SOURCES ${RAKNET_SOURCES} PARENT_SCOPE)
