@@ -14,7 +14,26 @@ public class RakPeerInterface implements Closeable {
     public static final long UNASSIGNED_RAKNET_GUID = -1;
 
     public static void loadNatives() {
-        System.loadLibrary( "raknet-jni" );
+        boolean isWindows = ( System.getProperty( "os.name" ).toLowerCase().contains( "win" ) );
+        boolean isX64 = ( System.getProperty( "sun.arch.data.model" ).equals( "64" ) );
+
+        if ( isWindows ) {
+            if ( isX64 ) {
+                if ( System.getProperty( "io.gomint.raknet.forcemsvc" ) != null ) {
+                    System.loadLibrary( "raknet-jni_x64-msvc" );
+                } else {
+                    System.loadLibrary( "raknet-jni_x64-mingw" );
+                }
+            } else {
+                System.loadLibrary( "raknet-jni_x86-msvc" );
+            }
+        } else {
+            if ( isX64 ) {
+                System.loadLibrary( "raknet-jni_x64" );
+            } else {
+                System.loadLibrary( "raknet-jni_x86" );
+            }
+        }
     }
 
     /**
