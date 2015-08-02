@@ -37,7 +37,7 @@ namespace priv {
         handle = ::CreateThread(0, 0, BaseThreadEntry, this, CREATE_SUSPENDED, 0);
     }
 
-    Thread::~Thread() {
+    ThreadImpl::~ThreadImpl() {
         ::CloseHandle(handle);
     }
 

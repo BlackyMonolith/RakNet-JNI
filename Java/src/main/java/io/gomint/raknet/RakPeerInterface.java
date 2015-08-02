@@ -81,7 +81,7 @@ public class RakPeerInterface implements Closeable {
                 return StartupResult.getByOrdinal( ordinal );
             } else {
                 int[] ports = new int[] { 0 };
-                String[] hostAddresses = new String[] { null };
+                String[] hostAddresses = new String[] { "" };
                 short[] socketFamilies = new short[] { SocketFamily.AF_INET };
 
                 int ordinal = jniStartup( this.jniHandle, maxConnections, ports, hostAddresses, socketFamilies, threadPriority );

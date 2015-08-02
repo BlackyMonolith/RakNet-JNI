@@ -68,8 +68,7 @@ void PacketDispatcherThread::run() {
                 // Convert the sender's address into a string:
                 const char* address = packet->systemAddress.ToString( false, ':' );
                 jsize addressLen = std::strlen( address );
-                jstring remoteAddress = env->NewString( address, addressLen );
-
+                jstring remoteAddress = env->NewString( reinterpret_cast<const jchar*>( address ), addressLen );
                 env->CallVoidMethod( packetDispatcher,
                                      jniReceivePacket0ID,
                                      static_cast<jlong>( packet->guid.g ),
@@ -97,7 +96,7 @@ void PacketDispatcherThread::stop() {
     running = false;
 }
 
-unsigned char* GetPacketIdentifier( RakNet::Packet* packet ) {
+unsigned char GetPacketIdentifier( RakNet::Packet* packet ) {
     if ( static_cast<unsigned char>( packet->data[0] ) == ID_TIMESTAMP ) {
         return static_cast<unsigned char>( packet->data[ sizeof( RakNet::MessageID ) + sizeof( RakNet::Time ) ] );
     } else {

@@ -1,32 +1,50 @@
-cmake_minimum_required(VERSION 3.2)
+cmake_minimum_required(VERSION 3.0)
 project(RakNet_JNI)
 
+# Detect processor architecture:
+include ( CMakeDetectArchitecture.cmake )
+target_architecture ( BUILD_ARCH )
+
+# Whether or not to build in 64-Bit mode:
+IF ( BUILD_ARCH STREQUAL "x64" )
+    message ( "Proposing x64 Build" )
+    option ( BUILD_X64 "Build in x64 mode when enabled or in x86 mode when disabled" ON )
+ELSE ( BUILD_ARCH STREQUAL "x64" )
+    message ( "Proposing x86 Build" )
+    option ( BUILD_X64 "Build in x64 mode when enabled or in x86 mode when disabled" OFF )
+ENDIF ( BUILD_ARCH STREQUAL "x64" )
+
+# Generate different configurations
+set ( CMAKE_CONFIGURATION_TYPES "Release" )
+set ( CMAKE_CONFIGURATION_TYPES "${CMAKE_CONFIGURATION_TYPES}" CACHE STRING "Reset the configurations" FORCE )
+
+# Build Compiler Flags
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
-# Detect JNI
-find_package(JNI)
-include_directories( ${JAVA_INCLUDE_PATH} ${JAVA_INCLUDE_PATH2} )
+IF ( MINGW OR CMAKE_COMPILER_IS_GNUCXX )
+    set ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive" CACHE STRING "Compiler Flags" FORCE )
+    IF ( NOT BUILD_X64 )
+        set ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m32" CACHE STRING "Compiler Flags" FORCE )
+    ENDIF ( NOT BUILD_X64 )
+ENDIF ( MINGW OR CMAKE_COMPILER_IS_GNUCXX )
 
-# Detect RakNet Sources:
-add_subdirectory(RakNet)
-add_subdirectory(JNI)
-
-set(SOURCE_FILES ${RAKNET_SOURCES} ${JNI_SOURCES})
-MESSAGE(STATUS "Sources are: ${SOURCE_FILES}")
-
-# Find the JNI libraries:
-
-add_definitions( "-fpermissive" )
-add_library(RakNet_JNI SHARED ${SOURCE_FILES})
-
-# Detect Libraries required by RakNet
+# Detect Libraries:
 IF ( WIN32 AND NOT UNIX )
-    set(RAKNET_LIBRARIES ws2_32.lib)
+    set ( BUILD_LIBRARIES "ws2_32.lib" )
 ELSE ( WIN32 AND NOT UNIX )
-    set(RAKNET_LIBRARIES pthread)
+    set ( BUILD_LIBRARIES "pthread" )
 ENDIF ( WIN32 AND NOT UNIX )
 
-TARGET_LINK_LIBRARIES( RakNet_JNI ${RAKNET_LIBRARIES} ${JAVA_JVM_LIBRARY} )
+find_package ( JNI )
+include_directories ( ${JAVA_INCLUDE_PATH} ${JAVA_INCLUDE_PATH2} )
+set ( BUILD_LIBRARIES "${BUILD_LIBRARIES} ${JAVA_JVM_LIBRARY}" )
 
-# Specify output directories
-set( LIBRARY_OUTPUT_DIRECTORY "./bin" )
+# Detect sources:
+add_subdirectory ( RakNet )
+add_subdirectory ( JNI )
+
+set ( SOURCE_FILES ${RAKNET_SOURCES} ${JNI_SOURCES} )
+
+# Build the library:
+add_library ( RakNet_JNI SHARED ${SOURCE_FILES} )
+TARGET_LINK_LIBRARIES ( RakNet_JNI ${BUILD_LIBRARIES} )
