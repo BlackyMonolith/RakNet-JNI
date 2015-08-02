@@ -62,11 +62,13 @@ namespace priv {
         ThreadImpl* impl = reinterpret_cast<ThreadImpl*>(lpParameter);
         if (impl == NULL) {
             ::_endthreadex(0);
+			return 0;
         }
 
         impl->run();
 
         ::_endthreadex(0);
+		return 0;
     }
 
 }

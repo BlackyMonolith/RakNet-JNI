@@ -41,7 +41,7 @@ JNIEXPORT jlong JNICALL Java_io_gomint_raknet_PacketDispatcher_jniInstallDispatc
     RakNet::RakPeerInterface* peerInterface = reinterpret_cast<RakNet::RakPeerInterface*>( jniHandle );
 
     // We now have everything in place to construct the dispatcher thread:
-    PacketDispatcherThread* dispatcher = new PacketDispatcherThread( jvm, clazz, packetDispatcher, peerInterface );
+    PacketDispatcherThread* dispatcher = new PacketDispatcherThread( jvm, packetDispatcher, peerInterface );
     dispatcher->start();
 
     return reinterpret_cast<jlong>( dispatcher );

@@ -32,8 +32,13 @@ public abstract class PacketDispatcher {
     }
 
     // ----------------------------------------------------------- Callbacks from JNI
-    protected abstract void jniReceivePacket( long sender, long length, byte[] payload );
-    protected abstract void jniReceivePacket0( long sender, long length, byte[] payload, String remoteAddress, int remotePort );
+    public void jniReceivePacket( long sender, long length, byte[] payload ) {
+
+    }
+
+    public void jniReceivePacket0( long sender, long length, byte[] payload, String remoteAddress, int remotePort ) {
+
+    }
 
     // ----------------------------------------------------------- JNI Internals
     private static native long jniInstallDispatcher( long rakNetPeerInterface, PacketDispatcher dispatcher );

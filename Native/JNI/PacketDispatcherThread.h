@@ -36,7 +36,6 @@ class PacketDispatcherThread : public Thread {
 public:
 
     PacketDispatcherThread( JavaVM* jvm,
-                            jclass packetDispatcherClass,
                             jobject packetDispatcher,
                             RakNet::RakPeerInterface* peerInterface );
 
@@ -47,7 +46,6 @@ private:
 
     bool running;
     JavaVM* jvm;
-    jclass packetDispatcherClass;
     jobject packetDispatcher;
     RakNet::RakPeerInterface* peerInterface;
 

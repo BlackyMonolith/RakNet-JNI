@@ -31,12 +31,10 @@
 unsigned char GetPacketIdentifier( RakNet::Packet* );
 
 PacketDispatcherThread::PacketDispatcherThread( JavaVM* jvm,
-                                                jclass packetDispatcherClass,
                                                 jobject packetDispatcher,
                                                 RakNet::RakPeerInterface* peerInterface ) :
         running( true ),
         jvm( jvm ),
-        packetDispatcherClass( packetDispatcherClass ),
         packetDispatcher( packetDispatcher ),
         peerInterface( peerInterface ) {
 
@@ -45,7 +43,13 @@ PacketDispatcherThread::PacketDispatcherThread( JavaVM* jvm,
 void PacketDispatcherThread::run() {
     // Attach ourselves to the JVM:
     JNIEnv* env;
-    jvm->AttachCurrentThread( (void**) &env, NULL );
+	JavaVMAttachArgs vmArgs;
+	vmArgs.version = JNI_VERSION_1_6;
+	vmArgs.name = "RakNetJNI-PacketDispatcher";
+	vmArgs.group = NULL;
+    jvm->AttachCurrentThread( (void**) &env, &vmArgs );
+
+	jclass packetDispatcherClass = env->FindClass("io/gomint/raknet/PacketDispatcher");
 
     // Cache field and method IDs from the JVM:
     jmethodID jniReceivePacketID = env->GetMethodID( packetDispatcherClass, "jniReceivePacket", "(JJ[B)V" );
@@ -89,7 +93,7 @@ void PacketDispatcherThread::run() {
         }
     }
 
-    jvm->DetachCurrentThread();
+	jvm->DetachCurrentThread();
 }
 
 void PacketDispatcherThread::stop() {
