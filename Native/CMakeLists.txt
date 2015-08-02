@@ -19,10 +19,10 @@ set ( CMAKE_CONFIGURATION_TYPES "Release" )
 set ( CMAKE_CONFIGURATION_TYPES "${CMAKE_CONFIGURATION_TYPES}" CACHE STRING "Reset the configurations" FORCE )
 
 # Build Compiler Flags
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
 
 IF ( MINGW OR CMAKE_COMPILER_IS_GNUCXX )
-    set ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive" CACHE STRING "Compiler Flags" FORCE )
+    set ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive -D__NO_INLINE__" CACHE STRING "Compiler Flags" FORCE )
     IF ( NOT BUILD_X64 )
         set ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m32" CACHE STRING "Compiler Flags" FORCE )
     ENDIF ( NOT BUILD_X64 )
@@ -37,7 +37,6 @@ ENDIF ( WIN32 AND NOT UNIX )
 
 find_package ( JNI )
 include_directories ( ${JAVA_INCLUDE_PATH} ${JAVA_INCLUDE_PATH2} )
-set ( BUILD_LIBRARIES "${BUILD_LIBRARIES} ${JAVA_JVM_LIBRARY}" )
 
 # Detect sources:
 add_subdirectory ( RakNet )
@@ -47,4 +46,4 @@ set ( SOURCE_FILES ${RAKNET_SOURCES} ${JNI_SOURCES} )
 
 # Build the library:
 add_library ( RakNet_JNI SHARED ${SOURCE_FILES} )
-TARGET_LINK_LIBRARIES ( RakNet_JNI ${BUILD_LIBRARIES} )
+TARGET_LINK_LIBRARIES ( RakNet_JNI ${BUILD_LIBRARIES} ${JAVA_JVM_LIBRARY} )

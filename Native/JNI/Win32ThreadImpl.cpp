@@ -28,13 +28,14 @@
 
 #include "Win32ThreadImpl.h"
 #include "Thread.h"
+#include <process.h>
 
 namespace priv {
 
-    DWORD WINAPI BaseThreadEntry(LPVOID lpParameter);
+    unsigned WINAPI BaseThreadEntry(void* lpParameter);
 
     ThreadImpl::ThreadImpl(Thread* thread) : thread( thread ) {
-        handle = ::CreateThread(0, 0, BaseThreadEntry, this, CREATE_SUSPENDED, 0);
+        handle = reinterpret_cast<HANDLE>( ::_beginthreadex( NULL, 0, &BaseThreadEntry, this, CREATE_SUSPENDED, NULL ) );
     }
 
     ThreadImpl::~ThreadImpl() {
@@ -57,12 +58,15 @@ namespace priv {
         ::TerminateThread(handle, 0);
     }
 
-    DWORD WINAPI BaseThreadEntry(LPVOID lpParameter) {
+    unsigned WINAPI BaseThreadEntry(void* lpParameter) {
         ThreadImpl* impl = reinterpret_cast<ThreadImpl*>(lpParameter);
-        if (impl == NULL)
-            return 0;
+        if (impl == NULL) {
+            ::_endthreadex(0);
+        }
 
         impl->run();
+
+        ::_endthreadex(0);
     }
 
 }

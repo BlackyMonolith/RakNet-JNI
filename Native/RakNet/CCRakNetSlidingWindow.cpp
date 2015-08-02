@@ -218,7 +218,13 @@ void CCRakNetSlidingWindow::OnAck(CCTimeType curTime, CCTimeType rtt, bool hasBA
 		double d = .05;
 		double difference = rtt - estimatedRTT;
 		estimatedRTT = estimatedRTT + d * difference;
-		deviationRtt = deviationRtt + d * (abs(difference) - deviationRtt);
+
+		// ------------------------ RakNet-JNI ------------------------ //
+		// This code will not compile for MSVC 15 as the call to abs
+		// is considered ambigous; made it explicit
+		// ------------------------------------------------------------ //
+		// deviationRtt = deviationRtt + d * (abs(difference) - deviationRtt);
+		deviationRtt = deviationRtt + d * (fabs(difference) - deviationRtt);
 	}
 
 	_isContinuousSend=isContinuousSend;
