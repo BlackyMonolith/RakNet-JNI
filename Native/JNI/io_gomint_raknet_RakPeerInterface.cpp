@@ -55,6 +55,7 @@ JNIEXPORT jint JNICALL Java_io_gomint_raknet_RakPeerInterface_jniStartup(
     RakNet::RakPeerInterface* peerInterface = reinterpret_cast<RakNet::RakPeerInterface*>( jniHandle );
 
     RakNet::SocketDescriptor descriptors[8];
+	std::memset( descriptors, 0, 8 * sizeof(RakNet::SocketDescriptor) );
     unsigned int socketDescriptorCount = static_cast<unsigned int>( env->GetArrayLength( ports ) );
 
     jint* _ports = env->GetIntArrayElements( ports, NULL );
@@ -67,9 +68,6 @@ JNIEXPORT jint JNICALL Java_io_gomint_raknet_RakPeerInterface_jniStartup(
         const char* hostAddressChars = env->GetStringUTFChars( hostAddress, NULL );
         jint hostAddressLength = env->GetStringLength( hostAddress );
         std::strncpy( descriptors[i].hostAddress, hostAddressChars, 32 );
-        if ( hostAddressLength < 32 ) {
-            descriptors[i].hostAddress[ hostAddressLength - 1 ] = '\0';
-        }
         env->ReleaseStringUTFChars( hostAddress, hostAddressChars );
 
         descriptors[i].socketFamily = static_cast<short>( _socketFamilies[i] == 0x0017 ? AF_INET6 : AF_INET );

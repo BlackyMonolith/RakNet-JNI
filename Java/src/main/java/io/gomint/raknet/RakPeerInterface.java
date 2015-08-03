@@ -20,18 +20,18 @@ public class RakPeerInterface implements Closeable {
         if ( isWindows ) {
             if ( isX64 ) {
                 if ( System.getProperty( "io.gomint.raknet.forcemsvc" ) != null ) {
-                    System.loadLibrary( "raknet_a_msvc" );
+                    System.loadLibrary( "raknet-x64-msvc" );
                 } else {
-                    System.loadLibrary( "raknet_a_mingw" );
+                    System.loadLibrary( "raknet-x64-mingw" );
                 }
             } else {
-                System.loadLibrary( "raknet_b_msvc" );
+                System.loadLibrary( "raknet-x86-msvc" );
             }
         } else {
             if ( isX64 ) {
-                System.loadLibrary( "raknet_a" );
+                System.loadLibrary( "raknet-x64" );
             } else {
-                System.loadLibrary( "raknet_b" );
+                System.loadLibrary( "raknet-x86" );
             }
         }
     }

@@ -55,6 +55,7 @@ JNIEXPORT void JNICALL Java_io_gomint_raknet_PacketDispatcher_jniUninstallDispat
         jlong extra ) {
     PacketDispatcherThread* dispatcher = reinterpret_cast<PacketDispatcherThread*>( extra );
     dispatcher->stop();
+    delete dispatcher;
 }
 
 #ifdef __cplusplus

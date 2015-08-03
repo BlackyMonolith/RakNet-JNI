@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.0)
 project(RakNet_JNI)
 
+set ( CMAKE_RULE_MESSAGES OFF )
+
 # Detect processor architecture:
 include ( CMakeDetectArchitecture.cmake )
 target_architecture ( BUILD_ARCH )
@@ -22,9 +24,9 @@ set ( CMAKE_CONFIGURATION_TYPES "${CMAKE_CONFIGURATION_TYPES}" CACHE STRING "Res
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
 
 IF ( MINGW OR CMAKE_COMPILER_IS_GNUCXX )
-    set ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive -D__NO_INLINE__" CACHE STRING "Compiler Flags" FORCE )
+    set ( CMAKE_CXX_FLAGS "-static ${CMAKE_CXX_FLAGS} -fpermissive -D__NO_INLINE__" )
     IF ( NOT BUILD_X64 )
-        set ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m32" CACHE STRING "Compiler Flags" FORCE )
+        set ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m32" )
     ENDIF ( NOT BUILD_X64 )
 ENDIF ( MINGW OR CMAKE_COMPILER_IS_GNUCXX )
 
