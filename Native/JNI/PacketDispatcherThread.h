@@ -39,6 +39,8 @@ public:
                             jobject packetDispatcher,
                             RakNet::RakPeerInterface* peerInterface );
 
+	jobject getPacketDispatcher() const;
+
     virtual void run();
     void stop();
 

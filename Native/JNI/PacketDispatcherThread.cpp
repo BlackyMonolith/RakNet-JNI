@@ -40,6 +40,10 @@ PacketDispatcherThread::PacketDispatcherThread( JavaVM* jvm,
 
 }
 
+jobject PacketDispatcherThread::getPacketDispatcher() const {
+	return packetDispatcher;
+}
+
 void PacketDispatcherThread::run() {
     // Attach ourselves to the JVM:
     JNIEnv* env;
@@ -64,9 +68,7 @@ void PacketDispatcherThread::run() {
 
             // Convert the payload into a byte array:
             jbyteArray payload = env->NewByteArray( packet->length );
-            jbyte* _payload = env->GetByteArrayElements( payload, NULL );
-            std::memcpy( _payload, packet->data, packet->length );
-            env->ReleaseByteArrayElements( payload, _payload, 0 );
+			env->SetByteArrayRegion(payload, 0, packet->length, reinterpret_cast<const jbyte*>(packet->data));
 
             if ( packetId == ID_CONNECTION_REQUEST_ACCEPTED || packetId == ID_NEW_INCOMING_CONNECTION ) {
                 // Convert the sender's address into a string:

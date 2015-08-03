@@ -40,8 +40,10 @@ JNIEXPORT jlong JNICALL Java_io_gomint_raknet_PacketDispatcher_jniInstallDispatc
     env->GetJavaVM( &jvm );
     RakNet::RakPeerInterface* peerInterface = reinterpret_cast<RakNet::RakPeerInterface*>( jniHandle );
 
+	jobject globalRefPacketDispatcher = env->NewGlobalRef(packetDispatcher);
+
     // We now have everything in place to construct the dispatcher thread:
-    PacketDispatcherThread* dispatcher = new PacketDispatcherThread( jvm, packetDispatcher, peerInterface );
+    PacketDispatcherThread* dispatcher = new PacketDispatcherThread( jvm, globalRefPacketDispatcher, peerInterface );
     dispatcher->start();
 
     return reinterpret_cast<jlong>( dispatcher );
@@ -54,6 +56,7 @@ JNIEXPORT void JNICALL Java_io_gomint_raknet_PacketDispatcher_jniUninstallDispat
         jobject packetDispatcher,
         jlong extra ) {
     PacketDispatcherThread* dispatcher = reinterpret_cast<PacketDispatcherThread*>( extra );
+	env->DeleteGlobalRef(dispatcher->getPacketDispatcher());
     dispatcher->stop();
     delete dispatcher;
 }
